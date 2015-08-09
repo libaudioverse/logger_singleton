@@ -93,7 +93,7 @@ void initialize() {
 
 void shutdown() {
 	if(initcount == 1) {
-		delete[] singleton;
+		delete singleton;
 	}
 	initcount --;
 }
