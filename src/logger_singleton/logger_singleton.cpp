@@ -9,8 +9,22 @@
 namespace logger_singleton {
 
 Logger::Logger() {
-	logging_thread = std::thread([this]() {loggingThreadFunction();});
 	format_workspace = new char[format_workspace_size];
+	//This is a variation of powercores safeStartThread, extracted to avoid a dependency.
+	//We have to deal with EAGAIN.
+	bool retry = false;
+	do {
+		try {
+			logging_thread = std::thread([this]() {loggingThreadFunction();});
+			retry = false;
+		}
+		catch(std::system_error &e) {
+			//This next line is (hopefully) a workaround for a critical bug in VC++2013.
+			//See: https://connect.microsoft.com/VisualStudio/feedback/details/1053790
+			if(e.code().value() == std::make_error_code(std::errc::resource_unavailable_try_again).value()) retry = true;
+			else throw;
+		}
+	} while(retry);
 }
 
 Logger::~Logger() {
@@ -79,7 +93,7 @@ void initialize() {
 
 void shutdown() {
 	if(initcount == 1) {
-		delete[] singleton;
+		delete singleton;
 	}
 	initcount --;
 }

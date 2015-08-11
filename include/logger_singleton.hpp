@@ -53,8 +53,13 @@ class Logger {
 	void submitMessage(LoggingLevel level, std::string topic, std::string message);
 	template<typename...  ArgsT>
 	void submitFormattedMessage(LoggingLevel level, std::string topic, std::string format, ArgsT... args) {
-		std::unique_lock l(mutex);
+		std::unique_lock<std::mutex> l(mutex);
+		//We don't get snprintf until VC++2015, so work around it.
+		#if defined(_MSC_VER) && _MSC_VER < 1900
+		_snprintf_s(format_workspace, format_workspace_size, _TRUNCATE, format.c_str(), args...);
+		#else
 		snprintf(format_workspace, format_workspace_size, format.c_str(), args...);
+		#endif
 		std::string msg(format_workspace);
 		l.unlock();
 		submitMessage(level, topic, std::string(format_workspace));
