@@ -58,7 +58,7 @@ void Logger::loggingThreadFunction() {
 		auto msg = message_queue.front();
 		message_queue.pop();
 		if(msg.is_final) shouldContinue = false;
-		bool needsCallback = callback && msg.level <= level;
+		bool needsCallback = callback && msg.level >= level;
 		auto cb = callback;
 		//Execute callback outside the lock.  This prevents incoming messages from blocking.
 		l.unlock();

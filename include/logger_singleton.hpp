@@ -16,10 +16,10 @@ Everything at or below the currennt level will be logged.
 Default is info.
 */
 enum class LoggingLevel {
-	OFF = 0,
-	CRITICAL = 1,
-	INFO = 2,
-	DEBUG = 3,
+	DEBUG = 10,
+	INFO = 20,
+	CRITICAL = 30,
+	OFF = 40,
 };
 
 /**A message from the logger.
