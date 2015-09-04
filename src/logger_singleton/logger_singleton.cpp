@@ -29,7 +29,7 @@ Logger::Logger() {
 
 Logger::~Logger() {
 	std::unique_lock<std::mutex> l(mutex);
-	message_queue.push(LogMessage(LoggingLevel::CRITICAL, "logger_singleton", "Logger shutting down", true));
+	message_queue.push(LogMessage(LoggingLevel::INFO, "logger_singleton", "Logger shutting down", true));
 	l.unlock();
 	enqueued_message.notify_one();
 	logging_thread.join();
